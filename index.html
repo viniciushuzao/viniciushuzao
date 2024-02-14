@@ -37,8 +37,6 @@ FAZER:
     </style>
 </head>
 
-
-
 <title> PLAINTEXT DROPBOX </title>
 
 <body>
@@ -48,15 +46,13 @@ FAZER:
     <button id="id_botaoUppercase" onclick="Fuppercase();">Maiúscula</button>
 
 <hr>        
-<div id="id_nome_arquivo"></div>
+<div id="id_nome_arquivo" contenteditable="true"  spellcheck="false"></div>
 <div id="id_editor" contenteditable="true"  spellcheck="false"></div>
 
 <script>
 // Constante com data e hora atual.
 const __date = new Date();
-
-
-
+	
 function FsubstituirDescritor() {
     // Substitui o __DESCRITOR__ com sua descrição
     // Encontra os descritores
@@ -72,7 +68,6 @@ function FsubstituirDescritor() {
     // Alerta de copia
     FalertaBotao("id_botaoCopiar", "COPIADO!");
 }
-
 
 
 function Fcopiar() {
@@ -114,94 +109,35 @@ function FalertaBotao(idbotao, textoalerta) {
 
 
 function FabreDescricao(){
-    var nomeDescricao = document.getElementById('id_escolhaDescricao').value;
+    // Verifica qual o ambulatório com base no dia e hora.
+    var dia = __date.getDay()
+
+	var nomeDescricao = document.getElementById('id_escolhaDescricao').value;
     var texto = document.getElementById(nomeDescricao).innerText;
     document.getElementById("id_editor").innerText = texto;
 }
 
 
-function FabreAmbulatorio(){
-    // Verifica qual o ambulatório com base no dia e hora.
-    var dia = __date.getDay()
-
-    // Nome da especialidade.
-    var textoEspecialidade = document.getElementById("cabecalhoEspecialidade").innerText;
-
-    // Busca os textos de acordo com a semana.    
-    var textoCabecalho = "", textoPreceptores = "";
-
-    if (dia == 0){ // Domingo
-        textoCabecalho = document.getElementById("ambulatorioDomingo_cabecalho").innerText;
-        textoPreceptores = document.getElementById("ambulatorioDomingo_preceptores").innerText;
-
-    } else if (dia == 1){ // Segunda-feira
-        textoCabecalho = document.getElementById("ambulatorioSegunda_cabecalho").innerText;
-        textoPreceptores = document.getElementById("ambulatorioSegunda_preceptores").innerText;
-
-    } else if (dia == 2){ // Terça-feira
-        textoCabecalho = document.getElementById("ambulatorioTerca_cabecalho").innerText;
-        textoPreceptores = document.getElementById("ambulatorioTerca_preceptores").innerText;
+    function Fabreviacoes(){
+        // Funcao das abreviações
+        document.getElementById("id_abreviacao_hoje").innerText = __date.toLocaleDateString();
     
-    } else if (dia == 3){ // Quarta-feira
-        textoCabecalho = document.getElementById("ambulatorioQuarta_cabecalho").innerText;
-        textoPreceptores = document.getElementById("ambulatorioQuarta_preceptores").innerText;
-        
-    } else if (dia == 4){ // Quinta-feira
-        textoCabecalho = document.getElementById("ambulatorioQuinta_cabecalho").innerText;
-        textoPreceptores = document.getElementById("ambulatorioQuinta_preceptores").innerText;
+        let abreviaturas = document.getElementById("abreviacoes").innerText;
+        let _texto = document.getElementById("id_editor").innerText;
     
-    } else if (dia == 5){ // Sexta-feira
-        textoCabecalho = document.getElementById("ambulatorioSexta_cabecalho").innerText;
-        textoPreceptores = document.getElementById("ambulatorioSexta_preceptores").innerText;
+        var _result, _phrase, _abb, _def, _arr_def = [];
     
-    } else if (dia == 6){ // Sábado
-        textoCabecalho = document.getElementById("ambulatorioSabado_cabecalho").innerText;
-        textoPreceptores = document.getElementById("ambulatorioSabado_preceptores").innerText;
-    
-    } else {
-        console.log("Erro: não encontrado dia da semana!");
+        var lines = abreviaturas.split("\n");
+        for (var line = 0; line < lines.length; line++){
+            _phrase = lines[line].split(" ");
+            _abb = _phrase.shift();
+            _arr_def = _phrase.toString();
+            _def = _arr_def.replaceAll(",", " ");
+            _texto = _texto.replaceAll(_abb, _def);
+            //console.log(_texto);
+        }
+        document.getElementById("id_editor").innerText = _texto;
     }
-
-    // Encontra o modelo da consulta selecionado.
-    var nomeConsulta = document.getElementById('id_escolhaAmbulatorio').value;
-    var textoConsulta = document.getElementById(nomeConsulta).innerText;
-
-    // Imprime o texto construído.
-    var textoFinal = textoEspecialidade + textoCabecalho + textoConsulta + textoPreceptores 
-    document.getElementById("id_editor").innerText = textoFinal;
-}
-
-
-function FabreOutros(){
-    var nome = document.getElementById('id_escolhaOutros').value;
-    var texto = document.getElementById(nome).innerText;
-    document.getElementById("id_editor").innerText = texto;
-}
-
-</script>
-
-
-<script>
-function Fabreviacoes(){
-    // Funcao das abreviações
-    document.getElementById("id_abreviacao_hoje").innerText = __date.toLocaleDateString();
-
-    let abreviaturas = document.getElementById("abreviacoes").innerText;
-    let _texto = document.getElementById("id_editor").innerText;
-
-    var _result, _phrase, _abb, _def, _arr_def = [];
-
-    var lines = abreviaturas.split("\n");
-    for (var line = 0; line < lines.length; line++){
-        _phrase = lines[line].split(" ");
-        _abb = _phrase.shift();
-        _arr_def = _phrase.toString();
-        _def = _arr_def.replaceAll(",", " ");
-        _texto = _texto.replaceAll(_abb, _def);
-        //console.log(_texto);
-    }
-    document.getElementById("id_editor").innerText = _texto;
-}
 
 $( '#id_editor' ).on( 'keypress', function() {
     //Fabreviacoes();
@@ -238,7 +174,7 @@ function Fdbx_chooser(){
 				if (this.readyState == 4 && this.status == 200) {
 					// Typical action to be performed when the document is ready:
 					//textoAtual = xhttp.responseText;
-					document.getElementById('id_editor').innerText = xhttp.responseText;
+					document.getElementById('id_editor').innerHTML = xhttp.responseText;
 				}
 			};
 			xhttp.open("GET", dbx_file_link, true);
