@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<!-- @begin @sumario -->
+	
+	<head>
+		<meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+		<!-- @css -->
+		<style>    
+			/* COLOR NAMES: https://htmlcolorcodes.com/color-names/ */
+			#id_cabecalho{text-align:center;}
+			#id_cabecalhoLogin{text-align:right;}
+			#id_editor{width:85%; height:450px; font-size:16px; 
+				background-color:LightGray; float:center; margin-left:auto; 
+				margin-right:auto; min-width:50%; overflow:auto; padding:10px;}
+			#id_rodape{text-align:right;}
+		</style>
+	</head>
+
+	<title> FERRAMENTAS PLAINTEXT</title>
+
+	<body>
+		<h1>Ferramentas para PlainText</h1>
+		<hr>
+
+		<!----------------------- O U T R O S ---------------------------- -->
+		<h2>REGISTRO PAGAMENTO/BOLETO:</h2>
+		<hr>
+		Dia pagamento: <input type="date" id="id_rp_dia_pagamento"><br>
+		Estabelecimento: <input type="text" id="id_rp_nome_conta"><br>
+		Produto/Comentário: <input type="text" id="id_rp_comentario"><br>
+		Categoria: <input type="text" id="id_rp_categoria"><br>
+		Modo Pagamento: <input type="text" id="id_rp_modo"><br>
+		Valor: <input type="number" id="id_rp_valor_reais"> reais e <input type="number" id="id_rp_valor_centavos"><br>
+		
+		<div id="id_rp_retorno" contenteditable="true"  
+			 spellcheck="false" style="display:none;"></div>
+
+		<button id="" onclick="FregistroPagamento();">Construir</button>
+		
+		<script>
+			function FregistroPagamento(){
+				var dia = document.getElementById('id_rp_dia_pagamento').value;
+				var conta = '"' + document.getElementById('id_rp_nome_conta').value + '"';
+				var comentario = '"' + document.getElementById('id_rp_comentario').value + '"';
+				var categoria = '"' + document.getElementById('id_rp_categoria').value + '"';
+				var modo = '"' + document.getElementById('id_rp_modo').value + '"';
+				var reais = document.getElementById('id_rp_valor_reais').value;
+				var centavos = document.getElementById('id_rp_valor_centavos').value;
+				var valor = reais + "," + centavos;
+				var duplo = "&nbsp;";
+				var tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
+				
+				var retorno = dia + duplo + " * " + duplo + conta.toUpperCase() +
+						duplo + comentario + "<br>" +
+						tab + "Categoria: " + categoria + "<br>" +
+						tab + "Pagamento: " + modo + "<br>" +
+						tab + "ValorPago: " + valor + "<br>";
+						
+				document.getElementById("id_rp_retorno").style.display = ""; 
+				document.getElementById("id_rp_retorno").innerHTML = retorno;
+			}
+		</script>
+		
+
+	
+	</body>
+</html>
