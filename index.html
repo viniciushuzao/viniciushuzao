@@ -39,26 +39,10 @@ FAZER:
 
 
 
-<title> TÓRAX UNIFESP </title>
+<title> EDITOR TXT DROPBOX </title>
 
 <body>
-	
-	
-	<div id="id_area_login">
-		<h1>LOGIN:</h1>
-		Nome: <input type="text" id="id_login_nome"><br>
-		Senha: <input type="password" id="id_login_senha"><br>
-		<button id="" onclick="Flogin();">Login</button>
-	</div>
-	
-	<div id="id_todo_conteudo" style="display:none;">
-<div id="id_cabecalho">
-    <h1>TÓRAX - EPM/UNIFESP</h1>
-
-    <a href="https://account.huhsp.org.br/portal/auth/access" target="_blank" title="">PortalHSP</a> | 
-    <a href="https://tasyweb.spdm.org.br/#/" target="_blank" title="">TASY</a> | 
-    <a href="http://synapse-web.huhsp.org.br/WorkflowUI/?path=&SID=cbd4f2a164c8cf1230296fdbe11a9a3f88c90a9e" target="_blank" title="">SYNAPSE</a>
-</div>
+    <h1>EDITOR PLAINTEXT</h1>
 		
 <h1>Textos</h1>
     <p><i>Padronização das descrições e evoluções</i></p>
@@ -2568,23 +2552,6 @@ $( '#id_editor' ).on( 'keypress', function() {
 <script>
 // Para autorizar que meu app utilize a conta dropbox do usuário:
 
-function FdbxListaDiretorio(){
-    $.ajax({
-      url: 'https://api.dropboxapi.com/2/file_requests/list_v2',
-      crossDomain: true,
-      method: 'post',
-      headers: {
-        'Authorization': 'Bearer sl.BvdfMC5JzAmBl2GzpICIlGu4HKwMP1DMcSZMduSLjLhaI0GkCAyw7BlNbz0R6ZTwk_0aJ7E4Bc-6oLn2u4mgzh8LBOM0BqiTAKquZKoBGAd6o7yznJZPtosek7OhjFYKX7j1eXv3nBgK'
-      },
-      contentType: 'application/json',
-      data: JSON.stringify({
-        'limit': 1000
-      })
-    }).done(function(response) {
-      console.log(response);
-    });
-}
-
 function Fdbx_getFile(url){ 
 	console.log("Função Fdbx_getFile(): baixando url = " + url);
     var xhttp = new XMLHttpRequest();
@@ -2655,13 +2622,14 @@ function Fdbx_chooser(){
 
 function Fdbx_saver(){
     var _filename = sessionStorage.getItem("dbx_file_filename");
-    	var _url= "https://raw.githubusercontent.com/viniciushuzao/viniciushuzao/main/index.html";
-    
+    var _texto = document.getElementById('id_editor').innerText;       
+   	var _url = "https://raw.githubusercontent.com/viniciushuzao/viniciushuzao/main/index.html";
+    var _uri = "data:text/plain;base64," + btoa(_texto);
 
     var options = {
         files: [
-            //{'url': _url, 'filename': _filename},
-            {'url': '...', 'filename': '...'},
+            {'url': _uri, 'filename': _filename},
+            //{'url': '...', 'filename': '...'},
             // ...
         ],
     
