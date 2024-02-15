@@ -2,8 +2,7 @@
 <html>
 
 <!-- @begin @sumario
-
-
+    
 LER:
 https://developer.yahoo.com/performance/rules.html
 
@@ -148,112 +147,106 @@ $( '#id_editor' ).on( 'keypress', function() {
 
 
 
-
-
 <!-- @dropbox -->
-<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="8vlp8nlgmkuu14b">
-
+<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="8vlp8nlgmkuu14b"></script>
+<script>    
 //========================  DROPBOX  ====================== //
 
-</script>
-<script>
-function Fdbx_chooser(){
-    var options = {
-        // Required. Called when a user selects an item in the Chooser.
-        success: function(files) {
-            //alert("Here's the file link: " + files[0].link)
-            // Salva os dados do arquivo no armazenamento de sessão
-            var dbx_file_link = files[0].link;
-            var dbx_file_name = files[0].name;
-			
-			document.getElementById('id_nome_arquivo').innerText = files[0].name ;
-			
-            // Insere o conteudo do arquivo no editor
-			var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					// Typical action to be performed when the document is ready:
-					//textoAtual = xhttp.responseText;
-					document.getElementById('id_editor').innerHTML = xhttp.responseText;
-				}
-			};
-			xhttp.open("GET", dbx_file_link, true);
-			xhttp.send();
-		},
+    function Fdbx_chooser(){
+        var options = {
+            // Required. Called when a user selects an item in the Chooser.
+            success: function(files) {
+                //alert("Here's the file link: " + files[0].link)
+                // Salva os dados do arquivo no armazenamento de sessão
+                var dbx_file_link = files[0].link;
+                var dbx_file_name = files[0].name;
+    			
+    			document.getElementById('id_nome_arquivo').innerText = files[0].name ;
+    			
+                // Insere o conteudo do arquivo no editor
+    			var xhttp = new XMLHttpRequest();
+    			xhttp.onreadystatechange = function() {
+    				if (this.readyState == 4 && this.status == 200) {
+    					// Typical action to be performed when the document is ready:
+    					//textoAtual = xhttp.responseText;
+    					document.getElementById('id_editor').textContent = xhttp.responseText;
+    				}
+    			};
+    			xhttp.open("GET", dbx_file_link, true);
+    			xhttp.send();
+    		},
+        
+            // Optional. Called when the user closes the dialog without selecting a file
+            // and does not include any parameters.
+            cancel: function() {
+        
+            },
+        
+            // Optional. "preview" (default) is a preview link to the document for sharing,
+            // "direct" is an expiring link to download the contents of the file. For more
+            // information about link types, see Link types below.
+            linkType: "direct", // "direct" or "preview"
+        
+            // Optional. A value of false (default) limits selection to a single file, while
+            // true enables multiple file selection.
+            multiselect: false, // true or false
+        
+            // Optional. This is a list of file extensions. If specified, the user will
+            // only be able to select files with these extensions. You may also specify
+            // file types, such as "video" or "images" in the list. For more information,
+            // see File types below. By default, all extensions are allowed.
+            extensions: ['.txt', '.md', '.sh', '.tex', '.html', '.js', '.css'],
+        
+            // Optional. A value of false (default) limits selection to files,
+            // while true allows the user to select both folders and files.
+            // You cannot specify `linkType: "direct"` when using `folderselect: true`.
+            folderselect: false, // true or false
+        
+            // Optional. A limit on the size of each file that may be selected, in bytes.
+            // If specified, the user will only be able to select files with size
+            // less than or equal to this limit.
+            // For the purposes of this option, folders have size zero.
+            sizeLimit: 150 * 1024 * 1024, // --> 150Mb  // or any positive number
+        };
     
-        // Optional. Called when the user closes the dialog without selecting a file
-        // and does not include any parameters.
-        cancel: function() {
+        Dropbox.choose(options);
+    }
     
-        },
+    function Fdbx_saver(){
+        var _filename = document.getElementById('id_nome_arquivo').innerText;
+    	var _texto = document.getElementById('id_editor').innerText;       
+        var _url = "data:text/plain;base64," + btoa(unescape(encodeURIComponent(_texto)));    
     
-        // Optional. "preview" (default) is a preview link to the document for sharing,
-        // "direct" is an expiring link to download the contents of the file. For more
-        // information about link types, see Link types below.
-        linkType: "direct", // "direct" or "preview"
-    
-        // Optional. A value of false (default) limits selection to a single file, while
-        // true enables multiple file selection.
-        multiselect: false, // true or false
-    
-        // Optional. This is a list of file extensions. If specified, the user will
-        // only be able to select files with these extensions. You may also specify
-        // file types, such as "video" or "images" in the list. For more information,
-        // see File types below. By default, all extensions are allowed.
-        extensions: ['.txt', '.md', '.sh', '.tex', '.html', '.js', '.css'],
-    
-        // Optional. A value of false (default) limits selection to files,
-        // while true allows the user to select both folders and files.
-        // You cannot specify `linkType: "direct"` when using `folderselect: true`.
-        folderselect: false, // true or false
-    
-        // Optional. A limit on the size of each file that may be selected, in bytes.
-        // If specified, the user will only be able to select files with size
-        // less than or equal to this limit.
-        // For the purposes of this option, folders have size zero.
-        sizeLimit: 150 * 1024 * 1024, // --> 150Mb  // or any positive number
-    };
-
-    Dropbox.choose(options);
-}
-
-function Fdbx_saver(){
-    var _filename = document.getElementById('id_nome_arquivo').innerText;
-	var _texto = document.getElementById('id_editor').innerText;       
-    var _url = "data:text/plain;base64," + btoa(unescape(encodeURIComponent(_texto)));    
-
-    var options = {
-        files: [
-            {'url': _url, 'filename': _filename},
-            //{'url': '...', 'filename': '...'},
-            // ...
-        ],
-    
-        // Success is called once all files have been successfully added to the user's
-        // Dropbox, although they may not have synced to the user's devices yet.
-        success: function () {
-            // Indicate to the user that the files have been saved.
-            alert("Success! Files saved to your Dropbox.");
-        },
-    
-        // Progress is called periodically to update the application on the progress
-        // of the user's downloads. The value passed to this callback is a float
-        // between 0 and 1. The progress callback is guaranteed to be called at least
-        // once with the value 1.
-        progress: function (progress) {},
-    
-        // Cancel is called if the user presses the Cancel button or closes the Saver.
-        cancel: function () {},
-    
-        // Error is called in the event of an unexpected response from the server
-        // hosting the files, such as not being able to find a file. This callback is
-        // also called if there is an error on Dropbox or if the user is over quota.
-        error: function (errorMessage) {}
-    };
-    Dropbox.save(options);
-}
-
-
+        var options = {
+            files: [
+                {'url': _url, 'filename': _filename},
+                //{'url': '...', 'filename': '...'},
+                // ...
+            ],
+        
+            // Success is called once all files have been successfully added to the user's
+            // Dropbox, although they may not have synced to the user's devices yet.
+            success: function () {
+                // Indicate to the user that the files have been saved.
+                alert("Success! Files saved to your Dropbox.");
+            },
+        
+            // Progress is called periodically to update the application on the progress
+            // of the user's downloads. The value passed to this callback is a float
+            // between 0 and 1. The progress callback is guaranteed to be called at least
+            // once with the value 1.
+            progress: function (progress) {},
+        
+            // Cancel is called if the user presses the Cancel button or closes the Saver.
+            cancel: function () {},
+        
+            // Error is called in the event of an unexpected response from the server
+            // hosting the files, such as not being able to find a file. This callback is
+            // also called if there is an error on Dropbox or if the user is over quota.
+            error: function (errorMessage) {}
+        };
+        Dropbox.save(options);
+    }
 </script>
 
     <button id="" onclick="Fdbx_chooser();">DBx_get</button>
