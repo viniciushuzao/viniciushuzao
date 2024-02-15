@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+
+<!-- @begin @sumario
+    
+REPRODUTOR DE MUSICA DO DROPBOX
+
+-->
+
+<head>
+    <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- @css -->
+    <style>    
+    </style>
+</head>
+
+<title> DROPBOX SIMPLES - REPRODUTOR MÚSICA </title>
+
+<body>
+	<h1>DROPBOX SIMPLES - REPRODUTOR MÚSICA</h1>
+    
+    <hr>        
+    <span id="id_nome_arquivo"></span>
+    <div id="id_reprodutor"></div>
+
+<script>
+// Constante com data e hora atual.
+const __date = new Date();
+	
+function FalertaBotao(idbotao, textoalerta) {
+    // Captura o nome do botao para restaurar depois
+    var textooriginal = document.getElementById(idbotao).innerText;
+
+    // Alerta com feedback visual no botao
+    document.getElementById(idbotao).innerText = textoalerta;
+    setTimeout(function() { 
+        document.getElementById(idbotao).innerText = textooriginal;
+    }, 3000);
+}
+
+</script>
+
+
+
+<!-- @dropbox -->
+<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="8vlp8nlgmkuu14b"></script>
+<script>    
+//========================  DROPBOX  ====================== //
+
+    function Fdbx_chooser(){
+        var options = {
+            // Required. Called when a user selects an item in the Chooser.
+            success: function(files) {
+                //alert("Here's the file link: " + files[0].link)
+                // Salva os dados do arquivo no armazenamento de sessão
+                var dbx_file_link = files[0].link;
+                var dbx_file_name = files[0].name;
+    			
+    			document.getElementById('id_nome_arquivo').innerText = files[0].name ;
+    			
+                // Captura o conteudo do arquivo audio
+    			var xhttp = new XMLHttpRequest();
+    			xhttp.onreadystatechange = function() {
+    				if (this.readyState == 4 && this.status == 200) {
+                        const audio = new Audio(xhttp.responseText);
+                        audio.play();
+    				}
+    			};
+    			xhttp.open("GET", dbx_file_link, true);
+    			xhttp.send();
+    		},
+        
+            // Optional. Called when the user closes the dialog without selecting a file
+            // and does not include any parameters.
+            cancel: function() {
+        
+            },
+        
+            // Optional. "preview" (default) is a preview link to the document for sharing,
+            // "direct" is an expiring link to download the contents of the file. For more
+            // information about link types, see Link types below.
+            linkType: "direct", // "direct" or "preview"
+        
+            // Optional. A value of false (default) limits selection to a single file, while
+            // true enables multiple file selection.
+            multiselect: false, // true or false
+        
+            // Optional. This is a list of file extensions. If specified, the user will
+            // only be able to select files with these extensions. You may also specify
+            // file types, such as "video" or "images" in the list. For more information,
+            // see File types below. By default, all extensions are allowed.
+            extensions: ['.txt', '.md', '.sh', '.tex', '.html', '.js', '.css'],
+        
+            // Optional. A value of false (default) limits selection to files,
+            // while true allows the user to select both folders and files.
+            // You cannot specify `linkType: "direct"` when using `folderselect: true`.
+            folderselect: false, // true or false
+        
+            // Optional. A limit on the size of each file that may be selected, in bytes.
+            // If specified, the user will only be able to select files with size
+            // less than or equal to this limit.
+            // For the purposes of this option, folders have size zero.
+            sizeLimit: 150 * 1024 * 1024, // --> 150Mb  // or any positive number
+        };
+    
+        Dropbox.choose(options);
+    }
+    
+    function Fdbx_saver(){
+        var _filename = document.getElementById('id_nome_arquivo').innerText;
+    	var _texto = document.getElementById('id_editor').innerText;       
+        var _url = "data:text/plain;base64," + btoa(unescape(encodeURIComponent(_texto)));    
+    
+        var options = {
+            files: [
+                {'url': _url, 'filename': _filename},
+                //{'url': '...', 'filename': '...'},
+                // ...
+            ],
+        
+            // Success is called once all files have been successfully added to the user's
+            // Dropbox, although they may not have synced to the user's devices yet.
+            success: function () {
+                // Indicate to the user that the files have been saved.
+                alert("Success! Files saved to your Dropbox.");
+            },
+        
+            // Progress is called periodically to update the application on the progress
+            // of the user's downloads. The value passed to this callback is a float
+            // between 0 and 1. The progress callback is guaranteed to be called at least
+            // once with the value 1.
+            progress: function (progress) {},
+        
+            // Cancel is called if the user presses the Cancel button or closes the Saver.
+            cancel: function () {},
+        
+            // Error is called in the event of an unexpected response from the server
+            // hosting the files, such as not being able to find a file. This callback is
+            // also called if there is an error on Dropbox or if the user is over quota.
+            error: function (errorMessage) {}
+        };
+        Dropbox.save(options);
+    }
+</script>
+
+    <button id="" onclick="Fdbx_chooser();">DBx_get</button>
+    <button id="" onclick="Fdbx_saver();">DBx_save</button>
+-->
+
+<!-- @lixo -->
+<!----------------------- L I X O ---------------------------
+
+
+https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder
+
+------------------  lista diretorio -------------------
+
+    const data = JSON.stringify({
+      'include_deleted': false,
+      'include_has_explicit_shared_members': false,
+      'include_media_info': false,
+      'include_mounted_folders': true,
+      'include_non_downloadable_files': true,
+      'path': '/Homework/math',
+      'recursive': false
+    });
+    
+    let xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST', 'https://api.dropboxapi.com/2/files/list_folder');
+    xhr.setRequestHeader('Authorization', 'Basic <get app key and secret>');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    xhr.onload = function() {
+      console.log(xhr.response);
+    };
+    
+    xhr.send(data);
+
+
+------------------  upload -------------------
+
+const data = '@local_file.txt';
+
+let xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+xhr.open('POST', 'https://content.dropboxapi.com/2/files/upload');
+xhr.setRequestHeader('Authorization', 'Bearer <get access token>');
+xhr.setRequestHeader('Dropbox-API-Arg', '{"autorename":false,"mode":"add","mute":false,"path":"/Homework/math/Matrices.txt","strict_conflict":false}');
+xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+
+xhr.onload = function() {
+  console.log(xhr.response);
+};
+
+xhr.send(data);
+
+
+------------------  download -------------------
+
+let xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+xhr.open('POST', 'https://content.dropboxapi.com/2/files/download');
+xhr.setRequestHeader('Authorization', 'Bearer <get access token>');
+xhr.setRequestHeader('Dropbox-API-Arg', '{"path":"/Homework/math/Prime_Numbers.txt"}');
+
+xhr.onload = function() {
+  console.log(xhr.response);
+};
+
+xhr.send();
+
+
+
+
+
+function Fdbx_cacheServidor(){
+console.log("aqui");
+}
+
+
+function Fdbx_postFile(url){
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({
+        "limit": 1000
+    }));
+    console.log(xhr);
+}
+
+
+
+http://www.leonelcunha.net/formacao/HTML/css/menuhorizontal.html#
+
+    <style>
+.menuhorizontal2{
+margin: 0;
+padding: 0;
+width: auto;
+height: 30px;
+}
+.menuhorizontal2 ul{
+list-style: none;
+}
+.menuhorizontal2 li{
+width: 80px;
+padding:0px;
+margin: 0;
+position: relative;
+display: inline;
+float: left;
+border-left: #999999 thin solid;
+}
+.menuhorizontal2 li ul{
+display: none;
+padding: 0;
+margin: 0;
+position: absolute;
+top: 35px;
+left: 0;
+}
+/*nível inferior do menu com display: none*/
+
+.menuhorizontal2 a{
+display: block;
+text-decoration: none;
+padding: 7px;
+background-color: #CCCCCC;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size: 12px;
+font-weight: 400;
+}
+
+/* formatação da âncora e área clicável*/
+
+.menuhorizontal2 li:hover ul, li.over ul{
+display: block;
+}
+
+/*mostra nível inferior ao passar o cursor*/
+
+.menuhorizontal2 li.btnesquerdo{
+border: none;
+}
+</style>
+<ul class="menuhorizontal2">
+    <li class="btnesquerdo"><a href="#" onclick="">Descrições/POI</a></li>
+    <li><a href="#" onclick="">Ambulatório</a>
+        <ul>
+            <li><a href="#" onclick="FabreAmbulatorio('db_consulta_basica');">Básico</a></li>
+            <li><a href="#" onclick="FabreAmbulatorio('db_consulta_simpatectomia');">Simpatectomia</a></li>
+        </ul>
+    </li>
+    <li><a href="#" onclick="">Outros</a>
+        <ul>
+            <li><a href="#" onclick="">Barco</a></li>
+            <li><a href="#" onclick="">Casa</a></li>
+        </ul>
+    </li>
+    <li><a href="../posicionamento/p6.html">Posic. 6</a></li>
+    <li><a href="../posicionamento/p7.html">Posic. 7</a></li>
+</ul>
+
+
+<div id="id_rodape">
+    <p>Site produzido e mantido por: <strong>Vinicius DS Rimoldi</strong>
+    <br>Dúvidas e sugestões enviar para: 
+    <a href="mailto:rimoldi@unifesp.br">rimoldi@unifesp.br</a>
+    </p>
+</div>
+
+<script>
+// verificar mudança no <div>:
+// https://copyprogramming.com/howto/how-to-detect-change-on-the-div-text
+
+
+
+
+//Conversão do link para uma url da página armazenada no Dropbox.com
+//
+// ***LEMBRAR QUE MUDAR O www POR dl***
+//
+const urldropbox = {
+    broncoscopia: "https://dl.dropbox.com/scl/fi/a6ytvitu70iqrfyaficda/broncoscopia.html?rlkey=h5lwdzyulcf06nwdr5e6cm67u&dl=0",
+    decorticacao_vats: "https://dl.dropbox.com/scl/fi/yiyi72tvw5nqbt0o628vk/decorticacaoVATS.html?rlkey=vyd0sfc6yj9no6q1d5fwtrc77&dl=0",
+    decorticacao_aberta: "https://dl.dropbox.com/scl/fi/irympg2uh397tez85nvs6/decorticacaoAberta.html?rlkey=3f33k9xym5a4pf66vxhfgo7ua&dl=0",
+    pleurostomia: "https://dl.dropbox.com/scl/fi/aznus5zpyc1uoa2ps8a1p/pleurostomia.html?rlkey=vo53erlwr0nnfqindjqhvn9d8&dl=0",
+    resseccao_cunha: "https://dl.dropbox.com/scl/fi/jjmlu3o8xhvr50g9cpnvp/resseccaoCunha.html?rlkey=uegcd7ekecron0ckdgw9onvmm&dl=0",
+    simpatectomia_palmar: "https://dl.dropbox.com/scl/fi/mvtyk8cw0iar8d3lc19pt/simpatectomiaPalmar.html?rlkey=uq74ol47nm10j2q1n24j950z3&dl=0",
+    simpatectomia_axilar: "",
+    colocacao_tubo_t: "https://dl.dropbox.com/scl/fi/r8jen854yoc7ipaeqdk2m/colocacaoTuboT.html?rlkey=rvnyscystzxwogo2jn8gqzwx3&dl=0",
+    troca_tubo_t_por_tqt: "https://dl.dropbox.com/scl/fi/e7q3bvd4ipkjeah8wsueq/trocaTuboT.html?rlkey=eup8zxclopp6xjhx83nfezl3p&dl=0",
+    texto_ajuda: "https://dl.dropbox.com/scl/fi/k44law34ui1yhwsdwxyvj/texto_ajuda.html?rlkey=v3i4j2u27gcyojc9lc12hyl38&dl=0",
+    toracectomia: "https://dl.dropbox.com/scl/fi/88ju2m2uowiq07a1c1kre/toracectomia.html?rlkey=mtg9xog4yujjrmpqr6ksd9lex&dl=0",
+    };
+
+function FabreUrlDropbox(pagina) {
+    var link = "https://www.torax.22web.org/?url=" + btoa(encodeURI(urldropbox[pagina]));
+    //window.open(link, "_blank");
+    window.open(link, "_self");
+}
+
+function FinsereNoLaudo(nome_div) {
+    var nome_caixa = nome_div.replace("div", "caixa");
+    var checkBox = document.getElementById(nome_caixa);
+    var text = document.getElementById(nome_div);
+    if (checkBox.checked == true){
+        text.style.display = "inline";
+    } else {
+        text.style.display = "none";
+    }
+}
+
+function FlimpaCaixas() {
+    for (i = 0; i < document.forms.selecao.elements.length; i++)
+        if (document.forms.selecao.elements[i].type == "checkbox")
+        document.forms.selecao.elements[i].checked = false;
+}
+
+function FcopiarLaudo() {
+    // Seleciona o texto da div
+    var divText = document.getElementById('id_laudoFinal');
+    var range = document.createRange();
+    range.selectNode(divText);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+
+    // Executa o comando de cópia
+    document.execCommand('copy');
+
+    // Limpa a seleção
+    window.getSelection().removeAllRanges();
+
+    // Alerta que o texto foi copiado (pode ser substituído por um feedback visual)
+    document.getElementById("id_botaoCopiar").innerText = "COPIADO!";
+    setTimeout(function() { 
+        document.getElementById("id_botaoCopiar").innerText = "Copiar";
+    }, 3000);   
+}
+
+window.onload = function() {
+    var texto = localStorage.getItem('textoArmazenado');
+    document.getElementById('id_editor').innerText = texto;
+}
+
+function FsalvamentoLocal() {
+    // Salva o texto no armazenamento local
+    var textopuro = document.getElementById('id_editor').innerText;
+    localStorage.setItem("textoArmazenado", textopuro);
+
+    // Alerta de salvamento
+    FalertaBotao("id_botaoSalvar", "SALVO!");
+}
+
+
+function FsalvaJson(iddiv){
+  var element = document.getElementById(iddiv);
+  var jsonObject = {};
+  jsonObject.id = element.id;
+  jsonObject.innerHTML = element.innerHTML;
+
+  var jsonString = JSON.stringify(jsonObject); // this is json for your div. 
+
+  /// for append div and get div object back from json.
+  
+  var elementProto = JSON.parse(jsonString);
+  
+  console.log(elementProto);
+  ////document.getElementById('id_container') = elementProto.innerHTML;
+
+  //var element = document.createElement("DIV");
+  //element.innerHTML = elementProto.innerHTML;
+  //element.id = elementProto.id;
+  
+  
+  // append to container (in your case its page 1 or 2)
+  
+  //document.getElementById("container").append(element);
+}
+
+
+function FgetContent(patharquivo, iddiv){
+    var xmlhttp;
+    xmlhttp=new XMLHttpRequest();
+    xmlhttp.open('GET', patharquivo, false);
+    xmlhttp.send();
+    document.write(xmlhttp.responseText.split('\r\n').map(function (i) {return i.replace(/(.+),(.+),(.+)/g, 'Name: $1<br>Color: $2<br>Avatar: $3<br>')} ).join('<br/>'));
+}
+
+function FloadDoc() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    document.getElementById("demo").innerHTML = this.responseText;
+  }
+  xhttp.open("GET", "https://torax.22web.org/broncoscopia/padronizacaoBroncoscopia.html");
+  xhttp.send();
+}
+</script>
+-->
+
+<!-- @end -->
+</div>
+</body>
+</html>
