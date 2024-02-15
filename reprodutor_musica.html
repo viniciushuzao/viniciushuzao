@@ -53,23 +53,20 @@ function FalertaBotao(idbotao, textoalerta) {
         var options = {
             // Required. Called when a user selects an item in the Chooser.
             success: function(files) {
-                //alert("Here's the file link: " + files[0].link)
-                // Salva os dados do arquivo no armazenamento de sessão
                 var dbx_file_link = files[0].link;
                 var dbx_file_name = files[0].name;
-    			
-    			document.getElementById('id_nome_arquivo').innerText = files[0].name ;
-    			
-                // Captura o conteudo do arquivo audio
-    			var xhttp = new XMLHttpRequest();
-    			xhttp.onreadystatechange = function() {
-    				if (this.readyState == 4 && this.status == 200) {
-                        const audio = new Audio(xhttp.responseText);
-                        audio.play();
-    				}
-    			};
-    			xhttp.open("GET", dbx_file_link, true);
-    			xhttp.send();
+    		document.getElementById('id_nome_arquivo').innerText = files[0].name ;
+		    
+		// Captura o conteudo do arquivo audio
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				const audio = new Audio(xhttp.responseText);
+				audio.play();
+			}
+		};
+		xhttp.open("GET", dbx_file_link, true);
+		xhttp.send();
     		},
         
             // Optional. Called when the user closes the dialog without selecting a file
@@ -91,7 +88,7 @@ function FalertaBotao(idbotao, textoalerta) {
             // only be able to select files with these extensions. You may also specify
             // file types, such as "video" or "images" in the list. For more information,
             // see File types below. By default, all extensions are allowed.
-            extensions: ['.txt', '.md', '.sh', '.tex', '.html', '.js', '.css'],
+            extensions: ['.mp3',],
         
             // Optional. A value of false (default) limits selection to files,
             // while true allows the user to select both folders and files.
